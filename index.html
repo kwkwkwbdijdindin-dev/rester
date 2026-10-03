@@ -1,0 +1,2022 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width,
+initial-scale=1.0,
+maximum-scale=1.0,
+user-scalable=no">
+
+<title>Bird Game</title>
+
+<style>
+
+/* =========================
+   RESET
+========================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+
+    font-family: Arial, sans-serif;
+}
+
+
+/* =========================
+   GAME
+========================= */
+
+.game {
+    position: fixed;
+    inset: 0;
+
+    overflow: hidden;
+
+    background:
+    linear-gradient(
+        to bottom,
+        #ffb7d5 0%,
+        #ffe8f2 70%,
+        #ffb1d0 70%,
+        #ff91bd 100%
+    );
+}
+
+
+/* =========================
+   VIDEO
+========================= */
+
+.videoBackground {
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    display: none;
+
+    opacity: .30;
+
+    filter:
+        brightness(1.05)
+        saturate(1.15);
+
+    z-index: 0;
+
+    pointer-events: none;
+}
+
+.videoOverlay {
+    position: absolute;
+
+    inset: 0;
+
+    display: none;
+
+    background:
+        rgba(255,170,205,.20);
+
+    z-index: 1;
+
+    pointer-events: none;
+}
+
+
+/* =========================
+   MATAHARI
+========================= */
+
+.sun {
+    position: absolute;
+
+    width: 70px;
+    height: 70px;
+
+    top: 30px;
+    right: 25px;
+
+    background: #fff1a8;
+
+    border-radius: 50%;
+
+    box-shadow:
+        0 0 25px #fff6cf;
+
+    z-index: 2;
+}
+
+
+/* =========================
+   AWAN
+========================= */
+
+.cloud {
+    position: absolute;
+
+    width: 115px;
+    height: 38px;
+
+    background: white;
+
+    border-radius: 30px;
+
+    opacity: .85;
+
+    z-index: 2;
+
+    animation:
+        cloudMove 22s linear infinite;
+}
+
+.cloud::before,
+.cloud::after {
+    content: "";
+
+    position: absolute;
+
+    background: white;
+
+    border-radius: 50%;
+}
+
+.cloud::before {
+    width: 50px;
+    height: 50px;
+
+    left: 15px;
+    top: -22px;
+}
+
+.cloud::after {
+    width: 60px;
+    height: 60px;
+
+    right: 10px;
+    top: -30px;
+}
+
+.cloud1 {
+    top: 110px;
+    left: -160px;
+}
+
+.cloud2 {
+    top: 220px;
+    left: -450px;
+
+    animation-delay: 7s;
+}
+
+@keyframes cloudMove {
+
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(130vw);
+    }
+
+}
+
+
+/* =========================
+   DEKORASI
+========================= */
+
+.decor {
+    position: absolute;
+
+    color: white;
+
+    font-size: 25px;
+
+    z-index: 3;
+
+    animation:
+        floatDecor 3s ease-in-out infinite;
+}
+
+.decor1 {
+    top: 18%;
+    left: 8%;
+}
+
+.decor2 {
+    top: 32%;
+    right: 8%;
+
+    animation-delay: 1s;
+}
+
+.decor3 {
+    top: 55%;
+    left: 5%;
+
+    animation-delay: 2s;
+}
+
+@keyframes floatDecor {
+
+    0%,100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-12px);
+    }
+
+}
+
+
+/* =========================
+   BURUNG
+========================= */
+
+.bird {
+    position: absolute;
+
+    width: 60px;
+    height: 55px;
+
+    left: 20%;
+    top: 40%;
+
+    font-size: 45px;
+
+    z-index: 10;
+
+    filter:
+        drop-shadow(
+            2px 3px 3px
+            rgba(210,50,110,.25)
+        );
+}
+
+
+/* =========================
+   RINTANGAN
+========================= */
+
+.pipe {
+    position: absolute;
+
+    width: 58px;
+
+    background:
+    linear-gradient(
+        90deg,
+        #ff70aa,
+        #ffb5d2,
+        #ff70aa
+    );
+
+    border:
+        4px solid #e94e91;
+
+    border-radius: 16px;
+
+    z-index: 5;
+
+    box-shadow:
+        0 5px 10px
+        rgba(220,60,120,.25);
+}
+
+.pipe::before {
+    content: "🌸";
+
+    position: absolute;
+
+    left: 50%;
+
+    transform:
+        translateX(-50%);
+
+    font-size: 18px;
+}
+
+.pipe.top {
+    top: 0;
+}
+
+.pipe.top::before {
+    bottom: 4px;
+}
+
+.pipe.bottom {
+    bottom: 28%;
+}
+
+.pipe.bottom::before {
+    top: 4px;
+}
+
+
+/* =========================
+   TANAH
+========================= */
+
+.ground {
+    position: absolute;
+
+    bottom: 0;
+
+    width: 100%;
+    height: 28%;
+
+    background:
+    repeating-linear-gradient(
+        45deg,
+        #ffb5d1,
+        #ffb5d1 15px,
+        #ff94bd 15px,
+        #ff94bd 30px
+    );
+
+    border-top:
+        6px solid #ff70aa;
+
+    z-index: 8;
+}
+
+
+/* =========================
+   BUNGA
+========================= */
+
+.flower {
+    position: absolute;
+
+    bottom: 25%;
+
+    font-size: 25px;
+
+    z-index: 9;
+
+    animation:
+        flowerFloat 2s ease-in-out infinite;
+}
+
+.flower1 {
+    left: 10%;
+}
+
+.flower2 {
+    left: 55%;
+
+    animation-delay: .7s;
+}
+
+.flower3 {
+    left: 85%;
+
+    animation-delay: 1.4s;
+}
+
+@keyframes flowerFloat {
+
+    0%,100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-5px);
+    }
+
+}
+
+
+/* =========================
+   SKOR
+========================= */
+
+.score {
+    position: absolute;
+
+    top: 18px;
+    left: 18px;
+
+    color: white;
+
+    font-size: 30px;
+
+    font-weight: bold;
+
+    background:
+        rgba(255,105,165,.8);
+
+    padding:
+        7px 15px;
+
+    border-radius: 25px;
+
+    border:
+        3px solid white;
+
+    box-shadow:
+        0 4px 10px
+        rgba(220,60,120,.25);
+
+    text-shadow:
+        2px 2px #d94680;
+
+    z-index: 30;
+}
+
+
+/* =========================
+   START SCREEN
+========================= */
+
+.startScreen {
+    position: absolute;
+
+    inset: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    align-items: center;
+
+    text-align: center;
+
+    color: white;
+
+    background:
+        linear-gradient(
+            rgba(255,105,165,.30),
+            rgba(255,140,190,.45)
+        );
+
+    z-index: 100;
+}
+
+.birdStart {
+    font-size: 78px;
+
+    margin-bottom: 12px;
+
+    animation:
+        birdFloat 1s
+        ease-in-out infinite;
+}
+
+.startScreen h1 {
+    font-size:
+        clamp(
+            35px,
+            10vw,
+            70px
+        );
+
+    color: white;
+
+    text-shadow:
+        4px 4px #df4f8c;
+
+    margin-bottom: 10px;
+
+    animation:
+        titleFloat 1.5s
+        ease-in-out infinite;
+}
+
+.startScreen p {
+    font-size: 18px;
+
+    animation:
+        blink 1.2s infinite;
+}
+
+
+/* =========================
+   GAME OVER
+========================= */
+
+.gameOver {
+    position: absolute;
+
+    inset: 0;
+
+    display: none;
+
+    justify-content: center;
+
+    align-items: center;
+
+    flex-direction: column;
+
+    text-align: center;
+
+    color: white;
+
+    background:
+        rgba(255,105,165,.48);
+
+    z-index: 200;
+}
+
+.gameOver h2 {
+    font-size:
+        clamp(
+            40px,
+            12vw,
+            75px
+        );
+
+    color: white;
+
+    text-shadow:
+        4px 4px #d94382;
+
+    margin-bottom: 15px;
+}
+
+.gameOver p {
+    font-size: 23px;
+
+    background:
+        rgba(255,255,255,.22);
+
+    padding:
+        8px 20px;
+
+    border-radius: 20px;
+}
+
+.gameOver small {
+    margin-top: 15px;
+
+    font-size: 17px;
+
+    animation:
+        blink 1s infinite;
+}
+
+
+/* =========================
+   LAYER 2
+========================= */
+
+.layer2 {
+
+    position: absolute;
+
+    inset: 0;
+
+    display: none;
+
+    justify-content: center;
+
+    align-items: center;
+
+    flex-direction: column;
+
+    overflow: hidden;
+
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(255,255,255,.25),
+            rgba(255,105,165,.75)
+        );
+
+    backdrop-filter:
+        blur(5px);
+
+    -webkit-backdrop-filter:
+        blur(5px);
+
+    z-index: 500;
+}
+
+
+/* =========================
+   PARTIKEL LAYER 2
+========================= */
+
+.particle {
+
+    position: absolute;
+
+    font-size: 22px;
+
+    pointer-events: none;
+
+    animation:
+        particleMove
+        linear forwards;
+}
+
+@keyframes particleMove {
+
+    0% {
+        transform:
+            translate(0,0)
+            scale(.5)
+            rotate(0deg);
+
+        opacity: 0;
+    }
+
+    15% {
+        opacity: 1;
+    }
+
+    100% {
+        transform:
+            translate(
+                var(--x),
+                var(--y)
+            )
+            scale(1.4)
+            rotate(360deg);
+
+        opacity: 0;
+    }
+
+}
+
+
+/* =========================
+   TEKS LAYER 2
+========================= */
+
+.layerTitle {
+
+    color: white;
+
+    font-size:
+        clamp(
+            35px,
+            10vw,
+            65px
+        );
+
+    font-weight: 900;
+
+    letter-spacing: 5px;
+
+    text-shadow:
+        0 0 10px white,
+        0 0 25px #ff4f9a,
+        0 0 45px #ff1680;
+
+    margin-bottom: 35px;
+
+    animation:
+        titleGlow
+        1.5s ease-in-out infinite;
+}
+
+@keyframes titleGlow {
+
+    0%,100% {
+        transform:
+            scale(1);
+
+        text-shadow:
+            0 0 10px white,
+            0 0 20px #ff4f9a;
+    }
+
+    50% {
+        transform:
+            scale(1.08);
+
+        text-shadow:
+            0 0 15px white,
+            0 0 35px #ff1680,
+            0 0 60px #ff1680;
+    }
+
+}
+
+
+/* =========================
+   BUTTON KLIKME
+========================= */
+
+.klikme {
+
+    position: relative;
+
+    width:
+        min(280px, 75vw);
+
+    height: 90px;
+
+    border: none;
+
+    border-radius: 50px;
+
+    cursor: pointer;
+
+    overflow: hidden;
+
+    color: white;
+
+    font-size:
+        clamp(
+            25px,
+            7vw,
+            42px
+        );
+
+    font-weight: 900;
+
+    letter-spacing: 4px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff2f87,
+            #ff72b1,
+            #ff2f87,
+            #ff9ac5
+        );
+
+    background-size: 300% 300%;
+
+    box-shadow:
+        0 0 10px #fff,
+        0 0 25px #ff4f9a,
+        0 0 50px #ff1680,
+        0 10px 30px
+        rgba(180,30,100,.4);
+
+    animation:
+        buttonGradient 4s ease infinite,
+        buttonPulse 1.5s ease-in-out infinite;
+
+    transition:
+        transform .2s,
+        box-shadow .2s;
+}
+
+@keyframes buttonGradient {
+
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+
+}
+
+@keyframes buttonPulse {
+
+    0%,100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.06);
+    }
+
+}
+
+
+/* Cahaya berjalan */
+
+.klikme::before {
+
+    content: "";
+
+    position: absolute;
+
+    top: -50%;
+
+    left: -80%;
+
+    width: 50%;
+
+    height: 200%;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(255,255,255,.8),
+            transparent
+        );
+
+    transform:
+        rotate(25deg);
+
+    animation:
+        shine 2.2s linear infinite;
+}
+
+@keyframes shine {
+
+    0% {
+        left: -80%;
+    }
+
+    100% {
+        left: 150%;
+    }
+
+}
+
+
+/* Lingkaran luar */
+
+.klikme::after {
+
+    content: "";
+
+    position: absolute;
+
+    inset: -8px;
+
+    border:
+        3px solid
+        rgba(255,255,255,.7);
+
+    border-radius: 60px;
+
+    animation:
+        ring 1.5s ease-out infinite;
+
+}
+
+@keyframes ring {
+
+    0% {
+        transform: scale(.95);
+
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1.18);
+
+        opacity: 0;
+    }
+
+}
+
+
+/* Saat disentuh */
+
+.klikme:active {
+
+    transform:
+        scale(.88) !important;
+
+    box-shadow:
+        0 0 15px white,
+        0 0 35px #ff1680,
+        0 0 80px #ff1680;
+
+}
+
+
+/* =========================
+   GELOMBANG KLIK
+========================= */
+
+.ripple {
+
+    position: absolute;
+
+    width: 20px;
+    height: 20px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(255,255,255,.7);
+
+    transform:
+        translate(-50%,-50%);
+
+    pointer-events: none;
+
+    animation:
+        rippleEffect .7s ease-out forwards;
+
+}
+
+@keyframes rippleEffect {
+
+    from {
+        width: 20px;
+        height: 20px;
+
+        opacity: .9;
+    }
+
+    to {
+        width: 600px;
+        height: 600px;
+
+        opacity: 0;
+    }
+
+}
+
+
+/* =========================
+   TEKS BAWAH
+========================= */
+
+.tapText {
+
+    margin-top: 30px;
+
+    color: white;
+
+    font-size: 16px;
+
+    opacity: .9;
+
+    animation:
+        blink 1.2s infinite;
+}
+
+
+/* =========================
+   ANIMASI UMUM
+========================= */
+
+@keyframes titleFloat {
+
+    0%,100% {
+        transform:
+            translateY(0);
+    }
+
+    50% {
+        transform:
+            translateY(-8px);
+    }
+
+}
+
+@keyframes birdFloat {
+
+    0%,100% {
+        transform:
+            translateY(0);
+    }
+
+    50% {
+        transform:
+            translateY(-15px);
+    }
+
+}
+
+@keyframes blink {
+
+    0%,100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: .45;
+    }
+
+}
+
+
+/* =========================
+   JUMP
+========================= */
+
+.jumpEffect {
+
+    animation:
+        jumpShake .15s;
+
+}
+
+@keyframes jumpShake {
+
+    0% {
+        transform:
+            rotate(-10deg)
+            scale(1);
+    }
+
+    50% {
+        transform:
+            rotate(10deg)
+            scale(1.08);
+    }
+
+    100% {
+        transform:
+            rotate(-5deg)
+            scale(1);
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="game" id="game">
+
+
+<!-- VIDEO -->
+
+<video
+id="backgroundVideo"
+class="videoBackground"
+muted
+loop
+playsinline
+preload="auto">
+
+<source
+src="background.mp4"
+type="video/mp4">
+
+</video>
+
+
+<div
+class="videoOverlay"
+id="videoOverlay">
+</div>
+
+
+<!-- DEKORASI -->
+
+<div class="sun"></div>
+
+<div class="cloud cloud1"></div>
+<div class="cloud cloud2"></div>
+
+<div class="decor decor1">⭐</div>
+<div class="decor decor2">🌸</div>
+<div class="decor decor3">✨</div>
+
+
+<!-- SKOR -->
+
+<div class="score">
+
+🏆
+<span id="score">0</span>
+
+</div>
+
+
+<!-- BURUNG -->
+
+<div
+class="bird"
+id="bird">
+
+🐦
+
+</div>
+
+
+<!-- BUNGA -->
+
+<div class="flower flower1">🌷</div>
+<div class="flower flower2">🌸</div>
+<div class="flower flower3">🌼</div>
+
+
+<!-- TANAH -->
+
+<div class="ground"></div>
+
+
+<!-- MUSIK -->
+
+<audio
+id="gameMusic"
+src="music.mp3"
+loop
+preload="auto">
+</audio>
+
+
+<!-- START -->
+
+<div
+class="startScreen"
+id="startScreen">
+
+<div class="birdStart">
+🐦
+</div>
+
+<h1>
+BIRD JUMP
+</h1>
+
+<p>
+👆 Sentuh layar untuk mulai
+</p>
+
+</div>
+
+
+<!-- GAME OVER -->
+
+<div
+class="gameOver"
+id="gameOver">
+
+<h2>
+GAME OVER
+</h2>
+
+<p>
+🏆 Skor:
+<span id="finalScore">0</span>
+</p>
+
+<small>
+👆 Sentuh layar untuk main lagi
+</small>
+
+</div>
+
+
+<!-- =========================
+     LAYER 2
+========================= -->
+
+<div
+class="layer2"
+id="layer2">
+
+<div class="layerTitle">
+KLIKME
+</div>
+
+
+<button
+class="klikme"
+id="klikme">
+
+KLIKME
+
+</button>
+
+
+<div class="tapText">
+✨ Tekan tombol untuk lanjut ✨
+</div>
+
+</div>
+
+
+</div>
+
+
+<script>
+
+/* =========================
+   ELEMENT
+========================= */
+
+const game =
+document.getElementById("game");
+
+const bird =
+document.getElementById("bird");
+
+const scoreText =
+document.getElementById("score");
+
+const finalScore =
+document.getElementById("finalScore");
+
+const startScreen =
+document.getElementById("startScreen");
+
+const gameOverScreen =
+document.getElementById("gameOver");
+
+const backgroundVideo =
+document.getElementById("backgroundVideo");
+
+const videoOverlay =
+document.getElementById("videoOverlay");
+
+const gameMusic =
+document.getElementById("gameMusic");
+
+const layer2 =
+document.getElementById("layer2");
+
+const klikme =
+document.getElementById("klikme");
+
+
+/* =========================
+   VARIABLE GAME
+========================= */
+
+let birdY = 0;
+
+let velocity = 0;
+
+const gravity = .46;
+
+const jumpPower = -8.3;
+
+let gameRunning = false;
+
+let score = 0;
+
+let pipes = [];
+
+let pipeTimer = 0;
+
+
+/* =========================
+   AUDIO
+========================= */
+
+let audioContext = null;
+
+
+function initAudio() {
+
+    if (!audioContext) {
+
+        audioContext =
+        new (
+            window.AudioContext ||
+            window.webkitAudioContext
+        )();
+
+    }
+
+    if (
+        audioContext.state ===
+        "suspended"
+    ) {
+
+        audioContext.resume();
+
+    }
+
+}
+
+
+/* =========================
+   SUARA
+========================= */
+
+function sound(
+    frequency,
+    duration,
+    type = "sine"
+) {
+
+    initAudio();
+
+    const osc =
+    audioContext.createOscillator();
+
+    const gain =
+    audioContext.createGain();
+
+    osc.type = type;
+
+    osc.frequency.setValueAtTime(
+        frequency,
+        audioContext.currentTime
+    );
+
+    gain.gain.setValueAtTime(
+        .12,
+        audioContext.currentTime
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+        .001,
+        audioContext.currentTime + duration
+    );
+
+    osc.connect(gain);
+
+    gain.connect(
+        audioContext.destination
+    );
+
+    osc.start();
+
+    osc.stop(
+        audioContext.currentTime + duration
+    );
+
+}
+
+
+/* =========================
+   VIDEO
+========================= */
+
+function startVideo() {
+
+    videoOverlay.style.display =
+    "block";
+
+    backgroundVideo.style.display =
+    "block";
+
+    backgroundVideo.currentTime = 0;
+
+    backgroundVideo.play()
+    .catch(() => {});
+
+}
+
+
+/* =========================
+   MUSIK
+========================= */
+
+function startMusic() {
+
+    gameMusic.currentTime = 0;
+
+    gameMusic.volume = .5;
+
+    gameMusic.play()
+    .catch(() => {});
+
+}
+
+
+/* =========================
+   MULAI GAME
+========================= */
+
+function startGame() {
+
+    initAudio();
+
+    sound(
+        350,
+        .25,
+        "triangle"
+    );
+
+    startScreen.style.display =
+    "none";
+
+    gameOverScreen.style.display =
+    "none";
+
+    layer2.style.display =
+    "none";
+
+
+    pipes.forEach(pipe => {
+
+        pipe.top.remove();
+
+        pipe.bottom.remove();
+
+    });
+
+    pipes = [];
+
+    score = 0;
+
+    scoreText.textContent =
+    "0";
+
+    birdY =
+    game.clientHeight * .38;
+
+    velocity = 0;
+
+    pipeTimer = 0;
+
+    gameRunning = true;
+
+
+    if (
+        backgroundVideo.paused
+    ) {
+
+        startVideo();
+
+    }
+    else {
+
+        backgroundVideo.play()
+        .catch(() => {});
+
+    }
+
+
+    if (
+        gameMusic.paused
+    ) {
+
+        startMusic();
+
+    }
+
+
+    jump();
+
+}
+
+
+/* =========================
+   LOMPAT
+========================= */
+
+function jump() {
+
+    if (!gameRunning)
+    return;
+
+    velocity =
+    jumpPower;
+
+    sound(
+        520,
+        .12
+    );
+
+    bird.classList.remove(
+        "jumpEffect"
+    );
+
+    void bird.offsetWidth;
+
+    bird.classList.add(
+        "jumpEffect"
+    );
+
+}
+
+
+/* =========================
+   RINTANGAN
+========================= */
+
+function createPipe() {
+
+    const gap = 200;
+
+    const minHeight = 45;
+
+    const maxHeight =
+    game.clientHeight * .33;
+
+    const topHeight =
+    Math.floor(
+        Math.random() *
+        (maxHeight - minHeight)
+    ) + minHeight;
+
+    const playHeight =
+    game.clientHeight * .72;
+
+    const bottomHeight =
+    playHeight -
+    topHeight -
+    gap;
+
+
+    const topPipe =
+    document.createElement("div");
+
+    topPipe.className =
+    "pipe top";
+
+    topPipe.style.height =
+    topHeight + "px";
+
+
+    const bottomPipe =
+    document.createElement("div");
+
+    bottomPipe.className =
+    "pipe bottom";
+
+    bottomPipe.style.height =
+    Math.max(
+        40,
+        bottomHeight
+    ) + "px";
+
+
+    game.appendChild(
+        topPipe
+    );
+
+    game.appendChild(
+        bottomPipe
+    );
+
+
+    pipes.push({
+
+        top: topPipe,
+
+        bottom: bottomPipe,
+
+        x:
+        game.clientWidth + 80,
+
+        passed: false
+
+    });
+
+}
+
+
+/* =========================
+   TABRAKAN
+========================= */
+
+function collision(element) {
+
+    const a =
+    bird.getBoundingClientRect();
+
+    const b =
+    element.getBoundingClientRect();
+
+    const tolerance = 9;
+
+    return !(
+        a.right - tolerance < b.left ||
+        a.left + tolerance > b.right ||
+        a.bottom - tolerance < b.top ||
+        a.top + tolerance > b.bottom
+    );
+
+}
+
+
+/* =========================
+   GAME OVER
+========================= */
+
+function gameOver() {
+
+    if (!gameRunning)
+    return;
+
+    gameRunning = false;
+
+    sound(
+        250,
+        .5
+    );
+
+    finalScore.textContent =
+    score;
+
+    gameOverScreen.style.display =
+    "flex";
+
+}
+
+
+/* =========================
+   GAME LOOP
+========================= */
+
+function gameLoop() {
+
+    if (gameRunning) {
+
+        velocity += gravity;
+
+        birdY += velocity;
+
+        bird.style.top =
+        birdY + "px";
+
+
+        if (birdY < 0) {
+
+            birdY = 0;
+
+            velocity = 0;
+
+        }
+
+
+        if (
+            birdY +
+            bird.offsetHeight >=
+            game.clientHeight * .72
+        ) {
+
+            gameOver();
+
+        }
+
+
+        pipeTimer++;
+
+
+        if (
+            pipeTimer > 120
+        ) {
+
+            createPipe();
+
+            pipeTimer = 0;
+
+        }
+
+
+        pipes.forEach(
+        (pipe, index) => {
+
+            pipe.x -= 2.8;
+
+            pipe.top.style.left =
+            pipe.x + "px";
+
+            pipe.bottom.style.left =
+            pipe.x + "px";
+
+
+            if (
+                !pipe.passed &&
+                pipe.x + 58 <
+                game.clientWidth * .2
+            ) {
+
+                pipe.passed = true;
+
+                score++;
+
+                scoreText.textContent =
+                score;
+
+            }
+
+
+            if (
+                collision(pipe.top) ||
+                collision(pipe.bottom)
+            ) {
+
+                gameOver();
+
+            }
+
+
+            if (
+                pipe.x < -100
+            ) {
+
+                pipe.top.remove();
+
+                pipe.bottom.remove();
+
+                pipes.splice(
+                    index,
+                    1
+                );
+
+            }
+
+        });
+
+    }
+
+
+    requestAnimationFrame(
+        gameLoop
+    );
+
+}
+
+
+/* =========================
+   PARTIKEL LAYER 2
+========================= */
+
+function createParticles() {
+
+    const symbols = [
+        "✨",
+        "⭐",
+        "🌸",
+        "🌷",
+        "🌼",
+        "💫"
+    ];
+
+    for (
+        let i = 0;
+        i < 35;
+        i++
+    ) {
+
+        const p =
+        document.createElement("div");
+
+        p.className =
+        "particle";
+
+        p.textContent =
+        symbols[
+            Math.floor(
+                Math.random() *
+                symbols.length
+            )
+        ];
+
+        p.style.left =
+        Math.random() * 100 + "%";
+
+        p.style.top =
+        Math.random() * 100 + "%";
+
+        p.style.setProperty(
+            "--x",
+            (Math.random() * 300 - 150)
+            + "px"
+        );
+
+        p.style.setProperty(
+            "--y",
+            (Math.random() * 500 - 250)
+            + "px"
+        );
+
+        p.style.animationDuration =
+        (1 + Math.random() * 2)
+        + "s";
+
+        layer2.appendChild(p);
+
+
+        setTimeout(
+            () => p.remove(),
+            3000
+        );
+
+    }
+
+}
+
+
+/* =========================
+   KLIK BUTTON
+========================= */
+
+klikme.addEventListener(
+"click",
+function(e) {
+
+    e.stopPropagation();
+
+    sound(
+        700,
+        .15,
+        "triangle"
+    );
+
+    sound(
+        1000,
+        .25,
+        "sine"
+    );
+
+
+    /* RIPPLE */
+
+    const rect =
+    klikme.getBoundingClientRect();
+
+    const ripple =
+    document.createElement("span");
+
+    ripple.className =
+    "ripple";
+
+    ripple.style.left =
+    (e.clientX - rect.left) + "px";
+
+    ripple.style.top =
+    (e.clientY - rect.top) + "px";
+
+    klikme.appendChild(
+        ripple
+    );
+
+
+    setTimeout(
+        () => ripple.remove(),
+        800
+    );
+
+
+    createParticles();
+
+
+    /* Animasi layer */
+
+    layer2.animate(
+        [
+            {
+                transform:
+                "scale(1)"
+            },
+
+            {
+                transform:
+                "scale(1.03)"
+            },
+
+            {
+                transform:
+                "scale(1)"
+            }
+        ],
+        {
+            duration: 500
+        }
+    );
+
+});
+
+
+/* =========================
+   TAMPILKAN LAYER 2
+========================= */
+
+function showLayer2() {
+
+    layer2.style.display =
+    "flex";
+
+    createParticles();
+
+}
+
+
+/* =========================
+   KONTROL SENTUH
+========================= */
+
+document.addEventListener(
+"touchstart",
+function(e) {
+
+    if (
+        e.target === klikme ||
+        klikme.contains(e.target)
+    ) {
+
+        return;
+
+    }
+
+    e.preventDefault();
+
+
+    if (!gameRunning) {
+
+        startGame();
+
+    }
+    else {
+
+        jump();
+
+    }
+
+},
+{
+    passive: false
+});
+
+
+/* =========================
+   MOUSE
+========================= */
+
+document.addEventListener(
+"mousedown",
+function(e) {
+
+    if (
+        e.target === klikme ||
+        klikme.contains(e.target)
+    ) {
+
+        return;
+
+    }
+
+    if (!gameRunning) {
+
+        startGame();
+
+    }
+    else {
+
+        jump();
+
+    }
+
+});
+
+
+/* =========================
+   KEYBOARD
+========================= */
+
+document.addEventListener(
+"keydown",
+function(e) {
+
+    if (
+        e.code === "Space" ||
+        e.code === "ArrowUp"
+    ) {
+
+        e.preventDefault();
+
+
+        if (!gameRunning) {
+
+            startGame();
+
+        }
+        else {
+
+            jump();
+
+        }
+
+    }
+
+});
+
+
+/* =========================
+   MULAI LOOP
+========================= */
+
+gameLoop();
+
+
+/*
+   CONTOH:
+   Untuk membuka Layer 2,
+   jalankan:
+
+   showLayer2();
+
+*/
+
+</script>
+
+</body>
+
+</html>
